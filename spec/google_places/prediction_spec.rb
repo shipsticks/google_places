@@ -54,6 +54,12 @@ describe GooglePlaces::Prediction, vcr: { cassette_name: 'list_predictions'}  do
       GooglePlaces::Prediction.list_by_input('query', api_key, components: 'country:in')
     end
 
+    it "initiates a request with `sessiontoken`" do
+      options = request_params(sessiontoken: '1234')
+      expect(GooglePlaces::Request).to receive(:predictions_by_input).with(options)
+
+      GooglePlaces::Prediction.list_by_input('query', api_key, sessiontoken: '1234')
+    end
   end
 
   def request_params(options = {})

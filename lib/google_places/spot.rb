@@ -248,11 +248,17 @@ module GooglePlaces
     # @option options [Object] :retry_options[:status] ([])
     # @option options [Integer] :retry_options[:max] (0) the maximum retries
     # @option options [Integer] :retry_options[:delay] (5) the delay between each retry in seconds
+    # @option options [String] :sessiontoken
+    #   A random string which identifies an autocomplete session for billing purposes.
+    # @option options [Array] :fields
+    #   One or more fields, specifying the types of place data to return.
     def self.find(place_id, api_key, options = {})
       language  = options.delete(:language)
       region = options.delete(:region)
       retry_options = options.delete(:retry_options) || {}
       extensions = options.delete(:review_summary) ? 'review_summary' : nil
+      sessiontoken = options.delete(:sessiontoken)
+      fields = options.delete(:fields)
 
       request_options = {
         :placeid => place_id,
@@ -261,6 +267,15 @@ module GooglePlaces
         :extensions => extensions,
         :retry_options => retry_options
       }
+
+      if sessiontoken
+        request_options[:sessiontoken] = sessiontoken
+      end
+
+      if fields
+        request_options[:fields] = fields.join(',')
+      end
+
       request_options[:region] = region unless region.nil?
       response = Request.spot(request_options)
 

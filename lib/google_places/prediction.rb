@@ -36,6 +36,8 @@ module GooglePlaces
     # @option options [Object] :retry_options[:status] ([])
     # @option options [Integer] :retry_options[:max] (0) the maximum retries
     # @option options [Integer] :retry_options[:delay] (5) the delay between each retry in seconds
+    # @option options [String] :sessiontoken
+    #   A random string which identifies an autocomplete session for billing purposes.
     def self.list_by_input(input, api_key, options = {})
       lat = options.delete(:lat)
       lng = options.delete(:lng)
@@ -44,6 +46,7 @@ module GooglePlaces
       retry_options = options.delete(:retry_options) || {}
       types  = options.delete(:types)
       components = options.delete(:components)
+      sessiontoken = options.delete(:sessiontoken)
 
       options = {
         :input => input,
@@ -68,6 +71,10 @@ module GooglePlaces
 
       if components
         options[:components] = components
+      end
+
+      if sessiontoken
+        options[:sessiontoken] = sessiontoken
       end
 
       request(:predictions_by_input, options)
